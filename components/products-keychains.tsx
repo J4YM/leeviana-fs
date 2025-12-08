@@ -116,7 +116,7 @@ export default function ProductsKeychains() {
                   <h4 className="text-sm font-semibold text-foreground mb-1 line-clamp-2">{keychain.title}</h4>
                   <p className="text-xs text-muted-foreground mb-3 line-clamp-2 flex-grow">{keychain.description}</p>
                   <div className="bg-accent-brown/80 rounded-full py-2 px-3 text-center">
-                    <span className="text-sm font-bold text-accent-ivory">{keychain.price}</span>
+                    <span className="text-sm font-bold text-accent-brown">{keychain.price}</span>
                   </div>
                 </div>
               </div>
