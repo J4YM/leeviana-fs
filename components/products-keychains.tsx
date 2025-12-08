@@ -129,31 +129,6 @@ export default function ProductsKeychains() {
             ))}
           </div>
         </div>
-
-        <div>
-          <h3 className="text-2xl md:text-3xl font-serif font-bold text-foreground mb-8 text-center">
-            Customization Options
-          </h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {keychains.map((keychain) => (
-              <div key={keychain.id}>
-                <div className="aspect-square bg-accent-peach/10 rounded-lg overflow-hidden border border-border mb-4 flex items-center justify-center relative">
-                  <img
-                    src={`/.jpg?height=400&width=400&query=${keychain.image}`}
-                    alt={keychain.title}
-                    className="w-full h-full object-cover hover:scale-105 transition duration-300"
-                  />
-                  <div className="absolute inset-0 flex items-center justify-center text-center p-4">
-                    <span className="text-xs text-muted-foreground font-medium">{keychain.image}</span>
-                  </div>
-                </div>
-                <h3 className="text-lg font-semibold text-foreground text-center hover:text-accent-peach transition">
-                  {keychain.title}
-                </h3>
-              </div>
-            ))}
-          </div>
-        </div>
       </div>
     </section>
   )
