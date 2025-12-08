@@ -82,12 +82,6 @@ export default function ProductsKeychains() {
     },
   ]
 
-  const keychains = [
-    { id: 1, title: "Name & Initials", image: "name-initial-keychain.jpg" },
-    { id: 2, title: "Theme Designs", image: "theme-keychain-designs.jpg" },
-    { id: 3, title: "Miniature Art", image: "miniature-art-keychain.jpg" },
-    { id: 4, title: "Matching Sets", image: "couple-matching-keychains.jpg" },
-  ]
 
   return (
     <section id="keychains" className="py-16 md:py-24 bg-accent-peach/5">
