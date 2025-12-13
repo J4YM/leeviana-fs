@@ -1,76 +1,37 @@
 import Image from "next/image"
+import { createClient } from "@/lib/supabase/server"
 
-export default function ProductsFlowers() {
-  const flowers = [
-    { id: 1, title: "Tangled Decorative Flower", image: "/featured-flower-1.jpg" },
-    { id: 2, title: "Purple & Blue Bouquet", image: "/featured-flower-2.jpg" },
-    { id: 3, title: "Pink & White Stems", image: "/featured-flower-3.jpg" },
-    { id: 4, title: "Golden Orange Daisy", image: "/featured-flower-4.jpg" },
-    { id: 5, title: "Pink & Magenta Orchids", image: "/featured-flower-5.jpg" },
-    { id: 6, title: "Blue Gerbera Bouquet", image: "/featured-flower-6.jpg" },
-    { id: 7, title: "Pink Lily Elegance", image: "/featured-pink-lily-bouquet.jpg" },
-    { id: 8, title: "Striped Pink Beauty", image: "/featured-pink-stripe-bouquet.jpg" },
-    { id: 9, title: "Folded Pink Masterpiece", image: "/featured-pink-fold-bouquet.jpg" },
-  ]
+export default async function ProductsFlowers() {
+  const supabase = await createClient()
 
-  const customizationOptions = [
-    {
-      id: 1,
-      title: "Set A",
-      price: "₱220",
-      image: "/customize-set-a.jpg",
-      description: "Pink Guamamela, White Lily & Tulips with Pink Mini Flowers",
-    },
-    {
-      id: 2,
-      title: "Set B",
-      price: "₱190",
-      image: "/customize-set-b.jpg",
-      description: "Pink Tulips, White Lily with White Mini Flowers",
-    },
-    {
-      id: 3,
-      title: "Set C",
-      price: "₱190",
-      image: "/customize-set-c.jpg",
-      description: "Pink & Light Pink Lily with Blue Mini Flowers",
-    },
-    {
-      id: 4,
-      title: "Set D",
-      price: "₱190",
-      image: "/customize-set-d.jpg",
-      description: "Yellow Lilies & Tulips with White Mini Flowers",
-    },
-    {
-      id: 5,
-      title: "Set E",
-      price: "₱230",
-      image: "/customize-set-e.jpg",
-      description: "Pink Tulips, Daisy with Rolling Flow & Mini Flowers",
-    },
-    {
-      id: 6,
-      title: "Set F",
-      price: "₱220",
-      image: "/customize-set-f.jpg",
-      description: "Pink Tulips, Pink Lily with Pink & White Mini Flowers",
-    },
-    {
-      id: 7,
-      title: "Single Flower w/ Wrapped",
-      price: "₱90 each",
-      image: "/customize-single-flower.jpg",
-      description: "Mini or Lily Flower - Tulips, Lily, Tiger Lily",
-    },
-    {
-      id: 8,
-      title: "Big Bouquet",
-      price: "₱500",
-      image: "/customize-big-bouquet.jpg",
-      description: "Heart, Rolling Flow, Tulips, Tiger Lily & Mini Flowers",
-    },
-  ]
+  const { data: flowersData } = await supabase
+    .from("flower_products")
+    .select("*")
+    .eq("is_active", true)
+    .order("display_order", { ascending: true })
+
+  const { data: customizationData } = await supabase
+    .from("flower_customization")
+    .select("*")
+    .eq("is_active", true)
+    .order("display_order", { ascending: true })
+
+  const flowers =
+    flowersData?.map((f) => ({
+      id: f.display_order,
+      title: f.title,
+      image: f.image_url,
+      price: f.price,
+    })) || []
+
+  const customizationOptions =
+    customizationData?.map((c) => ({
+      id: c.display_order,
+      title: c.title,
+      price: c.price,
+      image: c.image_url,
+      description: c.description,
+    })) || []
 
   return (
     <section id="flowers" className="py-16 md:py-24 bg-background">
@@ -105,6 +66,9 @@ export default function ProductsFlowers() {
               <h3 className="text-lg font-semibold text-foreground text-center hover:text-accent-peach transition">
                 {flower.title}
               </h3>
+              {flower.price && (
+                <p className="text-base font-bold text-accent-peach-deep text-center mt-2">{flower.price}</p>
+              )}
             </div>
           ))}
         </div>

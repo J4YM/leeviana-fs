@@ -1,87 +1,23 @@
-export default function ProductsKeychains() {
-  const featuredKeychains = [
-    {
-      id: 1,
-      code: "A4",
-      title: "Ribbon Keychain",
-      image: "/keychain-code-a4.jpg",
-      price: "₱15",
-      description: "Good for group of friends",
-    },
-    {
-      id: 2,
-      code: "A5",
-      title: "Flower Keychain Trio",
-      image: "/keychain-code-a5.jpg",
-      price: "₱45",
-      description: "Good for trio bestie (5 pcs available only)",
-    },
-    {
-      id: 3,
-      code: "A3",
-      title: "Ice Pop Keychain",
-      image: "/keychain-code-a3.jpg",
-      price: "₱15",
-      description: "Available colors: Violet, Orange, Pink, Blue",
-    },
-    {
-      id: 4,
-      code: "A1",
-      title: "Family Keychain",
-      image: "/keychain-code-a1.jpg",
-      price: "₱3 for 89",
-      description: "Good for trio bestie",
-    },
-    {
-      id: 5,
-      code: "A8",
-      title: "Mini Flower Bouquet",
-      image: "/keychain-code-a8.jpg",
-      price: "₱50",
-      description: "Tulips & flowers (Pink/Blue/Violet)",
-    },
-    {
-      id: 6,
-      code: "A2",
-      title: "Tulips Keychain",
-      image: "/keychain-code-a2.jpg",
-      price: "₱25",
-      description: "Available: Pink, Blue, Yellow",
-    },
-    {
-      id: 7,
-      code: "A6",
-      title: "Small Flower Keychain",
-      image: "/keychain-code-a6.jpg",
-      price: "₱10",
-      description: "Good for group of friends",
-    },
-    {
-      id: 8,
-      code: "Custom",
-      title: "Customize Flower",
-      image: "/keychain-customize-flowers.jpg",
-      price: "₱99-110",
-      description: "Black ₱99, Blue ₱99, Yellow ₱110",
-    },
-    {
-      id: 9,
-      code: "A9",
-      title: "Cherry Keychain",
-      image: "/keychain-code-a9.jpg",
-      price: "₱15",
-      description: "Cute cherry pair charm",
-    },
-    {
-      id: 10,
-      code: "A7",
-      title: "Mini Keychain",
-      image: "/keychain-code-a7.jpg",
-      price: "₱15",
-      description: "Available: Orange, Blue, Pink",
-    },
-  ]
+import { createClient } from "@/lib/supabase/server"
 
+export default async function ProductsKeychains() {
+  const supabase = await createClient()
+
+  const { data: keychainsData } = await supabase
+    .from("keychain_products")
+    .select("*")
+    .eq("is_active", true)
+    .order("display_order", { ascending: true })
+
+  const featuredKeychains =
+    keychainsData?.map((k) => ({
+      id: k.display_order,
+      code: k.code,
+      title: k.title,
+      image: k.image_url,
+      price: k.price,
+      description: k.description,
+    })) || []
 
   return (
     <section id="keychains" className="py-16 md:py-24 bg-accent-peach/5">
