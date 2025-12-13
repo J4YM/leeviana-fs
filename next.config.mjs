@@ -6,6 +6,7 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
+  serverExternalPackages: ["@netlify/blobs"],
 }
 
 export default nextConfig
