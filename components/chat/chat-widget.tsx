@@ -297,8 +297,8 @@ export default function ChatWidget() {
         >
           <MessageCircle className="h-6 w-6" />
           {unreadCount > 0 && (
-            <Badge className="absolute -top-1 -right-1 h-6 w-6 flex items-center justify-center p-0 bg-destructive text-destructive-foreground text-xs">
-              {unreadCount > 9 ? "9+" : unreadCount}
+            <Badge className="absolute -top-1 -right-1 min-w-[24px] h-6 px-1 flex items-center justify-center bg-destructive text-destructive-foreground text-xs font-bold">
+              {unreadCount > 99 ? "99+" : unreadCount}
             </Badge>
           )}
         </Button>

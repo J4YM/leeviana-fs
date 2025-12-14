@@ -80,10 +80,17 @@ export default function ChatPage() {
       }
       
       setUser(user)
-      loadRooms()
+      // Load rooms after user is set
     }
     getUser()
   }, [])
+
+  // Load rooms when user is available
+  useEffect(() => {
+    if (user?.id) {
+      loadRooms()
+    }
+  }, [user])
 
   useEffect(() => {
     if (selectedRoom) {
@@ -100,6 +107,11 @@ export default function ChatPage() {
   }, [messages])
 
   const loadRooms = async () => {
+    // Don't load if user is not available
+    if (!user?.id) {
+      return
+    }
+
     setLoading(true)
     try {
       // Filter out admin's own chat rooms and only show customer rooms
@@ -107,7 +119,7 @@ export default function ChatPage() {
       const { data, error } = await supabase
         .from("chat_rooms")
         .select("*")
-        .neq("customer_id", user?.id || "") // Exclude admin's own rooms
+        .neq("customer_id", user.id) // Exclude admin's own rooms - user.id is guaranteed to be a UUID here
         .order("last_message_at", { ascending: false })
 
       if (error) throw error
@@ -210,7 +222,7 @@ export default function ChatPage() {
         setMessages(messagesWithSenders)
 
         // Mark messages as read
-        const unreadIds = data.filter((m) => !m.read_status && m.sender_id !== user?.id).map((m) => m.id)
+        const unreadIds = data.filter((m) => !m.read_status && m.sender_id !== (user?.id || "")).map((m) => m.id)
         if (unreadIds.length > 0) {
           await supabase
             .from("chat_messages")

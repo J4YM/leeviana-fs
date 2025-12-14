@@ -56,9 +56,9 @@ export default function CartSidebar() {
             <ShoppingCart className="h-5 w-5" />
             {getItemCount() > 0 && (
               <Badge
-                className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 bg-destructive text-destructive-foreground text-xs"
+                className="absolute -top-1 -right-1 min-w-[20px] h-5 px-1 flex items-center justify-center bg-destructive text-destructive-foreground text-xs font-bold"
               >
-                {getItemCount()}
+                {getItemCount() > 99 ? "99+" : getItemCount()}
               </Badge>
             )}
           </Button>
