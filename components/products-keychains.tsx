@@ -12,7 +12,8 @@ export default async function ProductsKeychains() {
 
   const featuredKeychains =
     keychainsData?.map((k) => ({
-      id: k.display_order,
+      id: k.id, // Use actual UUID, not display_order
+      displayOrder: k.display_order,
       code: k.code,
       title: k.title,
       image: k.image_url,

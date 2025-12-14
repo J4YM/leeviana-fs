@@ -80,17 +80,30 @@ export default function OrderConfirmationModal({
       if (orderError) throw orderError
 
       // Create order items
-      const orderItems = items.map((item) => ({
-        order_id: order.id,
-        product_type: item.productType,
-        product_id: item.productId || null,
-        product_code: item.productCode || null,
-        product_title: item.productTitle,
-        product_image: item.productImage,
-        quantity: item.quantity,
-        price_at_order: item.price,
-        customization: customizations[item.productTitle] || item.customization || null,
-      }))
+      const orderItems = items.map((item) => {
+        // Validate product_id is a valid UUID or null
+        let productId = null
+        if (item.productId) {
+          // Check if it's a valid UUID format
+          const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+          if (uuidRegex.test(item.productId)) {
+            productId = item.productId
+          }
+          // If not a UUID (e.g., it's a display_order number), set to null
+        }
+        
+        return {
+          order_id: order.id,
+          product_type: item.productType,
+          product_id: productId,
+          product_code: item.productCode || null,
+          product_title: item.productTitle,
+          product_image: item.productImage,
+          quantity: item.quantity,
+          price_at_order: item.price,
+          customization: customizations[item.productTitle] || item.customization || null,
+        }
+      })
 
       const { error: itemsError } = await supabase.from("order_items").insert(orderItems)
 

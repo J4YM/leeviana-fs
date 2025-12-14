@@ -23,26 +23,32 @@ export default async function AdminLayout({
     redirect("/admin/login")
   }
   
-  // Check admin status - try RPC function first, then fallback to direct query
+  // Check admin status - check email first, then RPC function, then fallback
   let isAdmin = false
   
-  try {
-    const { data: rpcResult } = await supabase.rpc("is_admin", { user_id: user.id })
-    isAdmin = rpcResult || false
-  } catch (error) {
-    // RPC function might not exist yet, use fallback
-    console.log("RPC function not available, using fallback")
-  }
-  
-  // Fallback: direct query (may cause recursion if policies not fixed yet)
-  if (!isAdmin) {
-    const { data: profile } = await supabase
-      .from("user_profiles")
-      .select("is_admin")
-      .eq("id", user.id)
-      .single()
+  // Check if it's the admin email
+  if (user.email === "leeviennafs@gmail.com") {
+    isAdmin = true
+  } else {
+    // Try RPC function first
+    try {
+      const { data: rpcResult } = await supabase.rpc("is_admin", { user_id: user.id })
+      isAdmin = rpcResult || false
+    } catch (error) {
+      // RPC function might not exist yet, use fallback
+      console.log("RPC function not available, using fallback")
+    }
     
-    isAdmin = profile?.is_admin || false
+    // Fallback: direct query
+    if (!isAdmin) {
+      const { data: profile } = await supabase
+        .from("user_profiles")
+        .select("is_admin")
+        .eq("id", user.id)
+        .single()
+      
+      isAdmin = profile?.is_admin || false
+    }
   }
   
   if (!isAdmin) {

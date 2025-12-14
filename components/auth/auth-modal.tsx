@@ -83,6 +83,27 @@ export default function AuthModal({ open, onOpenChange, defaultTab = "login" }: 
 
       if (error) throw error
 
+      // Check if user is admin and redirect
+      const { data: { user } } = await supabase.auth.getUser()
+      if (user) {
+        const isAdminEmail = user.email === "leeviennafs@gmail.com"
+        let isAdmin = isAdminEmail
+        
+        if (!isAdmin) {
+          const { data: profile } = await supabase
+            .from("user_profiles")
+            .select("is_admin")
+            .eq("id", user.id)
+            .single()
+          isAdmin = profile?.is_admin || false
+        }
+        
+        if (isAdmin) {
+          window.location.href = "/admin/dashboard"
+          return
+        }
+      }
+
       toast.success("Welcome back!")
       onOpenChange(false)
       setEmail("")

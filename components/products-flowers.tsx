@@ -19,7 +19,8 @@ export default async function ProductsFlowers() {
 
   const flowers =
     flowersData?.map((f) => ({
-      id: f.display_order,
+      id: f.id, // Use actual UUID, not display_order
+      displayOrder: f.display_order,
       title: f.title,
       image: f.image_url,
       price: f.price,
@@ -27,7 +28,8 @@ export default async function ProductsFlowers() {
 
   const customizationOptions =
     customizationData?.map((c) => ({
-      id: c.display_order,
+      id: c.id, // Use actual UUID, not display_order
+      displayOrder: c.display_order,
       title: c.title,
       price: c.price,
       image: c.image_url,
@@ -117,6 +119,7 @@ export default async function ProductsFlowers() {
                   <p className="text-base sm:text-lg font-bold text-accent-peach-deep text-center mb-2">{option.price}</p>
                   <ProductActions
                     productType="customization"
+                    productId={option.id}
                     productTitle={option.title}
                     productImage={option.image || "/placeholder.svg"}
                     price={option.price}
