@@ -68,12 +68,18 @@ export default function ChatWidget() {
     return () => subscription.unsubscribe()
   }, [])
 
-  // Get or create general chat room
+  // Get or create general chat room (only for non-admin users)
   useEffect(() => {
     if (!user) return
 
     const getOrCreateRoom = async () => {
       if (currentRoom) return
+
+      // Check if user is admin - don't create chat rooms for admins
+      const isAdminEmail = user.email === "leeviennafs@gmail.com"
+      if (isAdminEmail) {
+        return // Admins don't need chat widget
+      }
 
       // Check for existing general room
       const { data: existingRoom } = await supabase
@@ -88,22 +94,8 @@ export default function ChatWidget() {
         return
       }
 
-      // Create new general room
-      const { data: newRoom, error } = await supabase
-        .from("chat_rooms")
-        .insert({
-          customer_id: user.id,
-          room_type: "general",
-        })
-        .select()
-        .single()
-
-      if (error) {
-        console.error("Error creating chat room:", error)
-        return
-      }
-
-      setCurrentRoom(newRoom.id)
+      // Only create room if user opens chat (not automatically)
+      // Room will be created when order is placed or user manually opens chat
     }
 
     getOrCreateRoom()
@@ -278,7 +270,19 @@ export default function ChatWidget() {
     }
   }
 
+  // Don't show chat widget for admin users
   if (!user) {
+    return null
+  }
+
+  // Check if user is admin
+  const isAdminEmail = user.email === "leeviennafs@gmail.com"
+  if (isAdminEmail) {
+    return null
+  }
+
+  // Check if we're on an admin page
+  if (typeof window !== "undefined" && window.location.pathname.startsWith("/admin")) {
     return null
   }
 

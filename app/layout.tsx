@@ -4,7 +4,7 @@ import { Geist, Geist_Mono, Playfair_Display } from "next/font/google"
 import { Analytics } from "@vercel/analytics/next"
 import { Toaster } from "@/components/ui/sonner"
 import { CartProvider } from "@/contexts/cart-context"
-import ChatWidget from "@/components/chat/chat-widget"
+import ConditionalChatWidget from "@/components/chat/conditional-chat-widget"
 import "./globals.css"
 
 const _geist = Geist({ subsets: ["latin"] })
@@ -55,7 +55,7 @@ export default function RootLayout({
       <body className={`font-sans antialiased ${_playfair.variable}`}>
         <CartProvider>
           {children}
-          <ChatWidget />
+          <ConditionalChatWidget />
           <Toaster />
         </CartProvider>
         <Analytics />

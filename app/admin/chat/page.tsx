@@ -99,9 +99,12 @@ export default function ChatPage() {
   const loadRooms = async () => {
     setLoading(true)
     try {
+      // Filter out admin's own chat rooms and only show customer rooms
+      // Also ensure we only get one room per customer (the general room)
       const { data, error } = await supabase
         .from("chat_rooms")
         .select("*")
+        .neq("customer_id", user?.id || "") // Exclude admin's own rooms
         .order("last_message_at", { ascending: false })
 
       if (error) throw error
