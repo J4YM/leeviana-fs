@@ -88,7 +88,10 @@ export default function ChatPage() {
   useEffect(() => {
     if (selectedRoom) {
       loadMessages(selectedRoom.id)
-      subscribeToMessages(selectedRoom.id)
+      const unsubscribe = subscribeToMessages(selectedRoom.id)
+      return () => {
+        if (unsubscribe) unsubscribe()
+      }
     }
   }, [selectedRoom])
 
@@ -139,13 +142,17 @@ export default function ChatPage() {
             orderInfo = order
           }
 
-          // Get unread count
-          const { count } = await supabase
+          // Get unread count - messages not sent by admin and not read
+          const { count, error: countError } = await supabase
             .from("chat_messages")
             .select("*", { count: "exact", head: true })
             .eq("room_id", room.id)
             .eq("read_status", false)
-            .neq("sender_id", user?.id || "")
+            .neq("sender_id", user?.id || "") // Exclude admin's own messages
+
+          if (countError) {
+            console.error("Error getting unread count:", countError)
+          }
 
           return {
             ...room,
@@ -231,12 +238,62 @@ export default function ChatPage() {
           loadRooms() // Refresh unread counts
         }
       )
+      .on(
+        "postgres_changes",
+        {
+          event: "UPDATE",
+          schema: "public",
+          table: "chat_messages",
+          filter: `room_id=eq.${roomId}`,
+        },
+        () => {
+          loadMessages(roomId)
+          loadRooms() // Refresh unread counts when read status changes
+        }
+      )
       .subscribe()
 
     return () => {
       supabase.removeChannel(channel)
     }
   }
+
+  // Subscribe to all chat rooms for unread count updates
+  useEffect(() => {
+    if (!user) return
+
+    const channel = supabase
+      .channel("admin-chat-rooms-updates")
+      .on(
+        "postgres_changes",
+        {
+          event: "INSERT",
+          schema: "public",
+          table: "chat_messages",
+        },
+        () => {
+          // Refresh rooms to update unread counts when new messages arrive
+          loadRooms()
+        }
+      )
+      .on(
+        "postgres_changes",
+        {
+          event: "UPDATE",
+          schema: "public",
+          table: "chat_messages",
+        },
+        () => {
+          // Refresh rooms when messages are marked as read
+          loadRooms()
+        }
+      )
+      .subscribe()
+
+    return () => {
+      supabase.removeChannel(channel)
+    }
+  }, [user])
 
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault()

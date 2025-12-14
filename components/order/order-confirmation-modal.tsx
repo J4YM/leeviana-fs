@@ -153,29 +153,50 @@ export default function OrderConfirmationModal({
       if (itemsError) throw itemsError
 
       // Get or create a single general chat room for this user (one per user, not per order)
+      // IMPORTANT: Always use user.id (UUID) to ensure correct room lookup, never use name
       let chatRoom = null
-      const { data: existingRoom } = await supabase
+      
+      // First, try to find existing room using customer_id (user.id) - this is the correct identifier
+      const { data: existingRooms, error: findError } = await supabase
         .from("chat_rooms")
         .select("id")
-        .eq("customer_id", user.id)
+        .eq("customer_id", user.id) // Use UUID, not name
         .eq("room_type", "general")
-        .single()
+        .limit(1)
 
-      if (existingRoom) {
-        chatRoom = existingRoom
+      if (findError) {
+        console.error("Error finding chat room:", findError)
+      }
+
+      if (existingRooms && existingRooms.length > 0) {
+        chatRoom = existingRooms[0]
       } else {
-        // Create new general room
+        // Create new general room - using user.id (UUID) as customer_id
         const { data: newRoom, error: roomError } = await supabase
           .from("chat_rooms")
           .insert({
-            customer_id: user.id,
+            customer_id: user.id, // Always use UUID, never name
             room_type: "general",
           })
           .select()
           .single()
 
         if (roomError) {
-          console.error("Chat room error:", roomError)
+          // If error is unique constraint violation, try to get the existing room
+          if (roomError.code === "23505") {
+            const { data: existingRoom } = await supabase
+              .from("chat_rooms")
+              .select("id")
+              .eq("customer_id", user.id)
+              .eq("room_type", "general")
+              .limit(1)
+              .single()
+            if (existingRoom) {
+              chatRoom = existingRoom
+            }
+          } else {
+            console.error("Chat room error:", roomError)
+          }
         } else {
           chatRoom = newRoom
         }
