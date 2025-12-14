@@ -4,15 +4,20 @@ import AdminHeader from "@/components/admin/admin-header"
 import AdminSidebar from "@/components/admin/admin-sidebar"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 
-export default async function AdminDashboard() {
-  const supabase = await createClient()
+import { checkAdminAccess } from "@/lib/utils/admin-auth"
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+export default async function AdminDashboard() {
+  const { isAdmin, user } = await checkAdminAccess()
+  
   if (!user) {
     redirect("/admin/login")
   }
+  
+  if (!isAdmin) {
+    redirect("/")
+  }
+
+  const supabase = await createClient()
 
   // Get counts
   const { count: flowersCount } = await supabase.from("flower_products").select("*", { count: "exact", head: true })

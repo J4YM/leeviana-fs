@@ -64,6 +64,20 @@ export default function OrdersPage() {
         router.push("/admin/login")
         return
       }
+      
+      // Check if user is admin
+      const { data: profile } = await supabase
+        .from("user_profiles")
+        .select("is_admin")
+        .eq("id", user.id)
+        .single()
+      
+      if (!profile?.is_admin) {
+        toast.error("Unauthorized: Admin access required")
+        router.push("/")
+        return
+      }
+      
       setUser(user)
       loadOrders()
     }
