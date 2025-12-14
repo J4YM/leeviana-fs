@@ -167,8 +167,6 @@ export default function ChatPage() {
             console.error("Error getting unread count:", countError)
           }
 
-          const unreadCount = unreadMessages?.length || 0
-
           return {
             ...room,
             customer: {
