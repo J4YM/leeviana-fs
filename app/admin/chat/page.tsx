@@ -143,9 +143,10 @@ export default function ChatPage() {
           }
 
           // Get unread count - messages not sent by admin and not read
-          const { count, error: countError } = await supabase
+          // Use a proper query instead of count to ensure accuracy
+          const { data: unreadMessages, error: countError } = await supabase
             .from("chat_messages")
-            .select("*", { count: "exact", head: true })
+            .select("id")
             .eq("room_id", room.id)
             .eq("read_status", false)
             .neq("sender_id", user?.id || "") // Exclude admin's own messages
@@ -154,6 +155,8 @@ export default function ChatPage() {
             console.error("Error getting unread count:", countError)
           }
 
+          const unreadCount = unreadMessages?.length || 0
+
           return {
             ...room,
             customer: {
@@ -161,7 +164,7 @@ export default function ChatPage() {
               email: profileData?.email || userEmail,
             },
             order: orderInfo,
-            unread_count: count || 0,
+            unread_count: unreadCount,
           }
         })
       )
