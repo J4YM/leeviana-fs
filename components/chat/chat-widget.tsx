@@ -140,21 +140,17 @@ export default function ChatWidget() {
           sender: profiles?.find((p) => p.id === msg.sender_id),
         }))
         setMessages(messagesWithSenders)
-      }
 
-      if (error) {
-        console.error("Error loading messages:", error)
-        setLoading(false)
-        return
-      }
         // Mark messages as read
-        const unreadIds = data?.filter((m) => !m.read_status && m.sender_id !== user?.id).map((m) => m.id) || []
+        const unreadIds = data.filter((m) => !m.read_status && m.sender_id !== user?.id).map((m) => m.id)
         if (unreadIds.length > 0) {
           await supabase
             .from("chat_messages")
             .update({ read_status: true })
             .in("id", unreadIds)
         }
+      } else {
+        setMessages([])
       }
       setLoading(false)
     }
