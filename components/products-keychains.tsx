@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server"
+import ProductActions from "@/components/products/product-actions"
 
 export default async function ProductsKeychains() {
   const supabase = await createClient()
@@ -51,9 +52,17 @@ export default async function ProductsKeychains() {
                   </p>
                   <h4 className="text-sm font-semibold text-foreground mb-1 line-clamp-2">{keychain.title}</h4>
                   <p className="text-xs text-muted-foreground mb-3 line-clamp-2 flex-grow">{keychain.description}</p>
-                  <div className="bg-accent-brown/80 rounded-full py-2 px-3 text-center">
+                  <div className="bg-accent-brown/80 rounded-full py-2 px-3 text-center mb-2">
                     <span className="text-sm font-bold text-accent-brown">{keychain.price}</span>
                   </div>
+                  <ProductActions
+                    productType="keychain"
+                    productCode={keychain.code}
+                    productTitle={keychain.title}
+                    productImage={keychain.image || "/placeholder.svg"}
+                    price={keychain.price}
+                    description={keychain.description}
+                  />
                 </div>
               </div>
             ))}

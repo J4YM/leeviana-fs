@@ -23,6 +23,15 @@ export default async function AdminDashboard() {
 
   const { count: keychainsCount } = await supabase.from("keychain_products").select("*", { count: "exact", head: true })
 
+  const { count: ordersCount } = await supabase.from("orders").select("*", { count: "exact", head: true })
+
+  const { count: pendingOrdersCount } = await supabase
+    .from("orders")
+    .select("*", { count: "exact", head: true })
+    .eq("status", "pending")
+
+  const { count: chatRoomsCount } = await supabase.from("chat_rooms").select("*", { count: "exact", head: true })
+
   return (
     <div className="min-h-screen bg-background">
       <AdminHeader user={user} />
@@ -35,7 +44,7 @@ export default async function AdminDashboard() {
               <p className="text-muted-foreground">Manage your products and content from this dashboard.</p>
             </div>
 
-            <div className="grid gap-6 md:grid-cols-3">
+            <div className="grid gap-6 md:grid-cols-3 lg:grid-cols-6">
               <Card className="border-accent-peach/20">
                 <CardHeader>
                   <CardTitle className="text-2xl font-serif text-accent-peach">🌸 Flowers</CardTitle>
@@ -68,6 +77,28 @@ export default async function AdminDashboard() {
                   <p className="text-sm text-muted-foreground mt-2">Total products</p>
                 </CardContent>
               </Card>
+
+              <Card className="border-accent-peach/20">
+                <CardHeader>
+                  <CardTitle className="text-2xl font-serif text-accent-peach">📦 Orders</CardTitle>
+                  <CardDescription>Total orders</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-4xl font-bold text-foreground">{ordersCount || 0}</p>
+                  <p className="text-sm text-muted-foreground mt-2">{pendingOrdersCount || 0} pending</p>
+                </CardContent>
+              </Card>
+
+              <Card className="border-accent-peach/20">
+                <CardHeader>
+                  <CardTitle className="text-2xl font-serif text-accent-peach">💬 Chats</CardTitle>
+                  <CardDescription>Active conversations</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-4xl font-bold text-foreground">{chatRoomsCount || 0}</p>
+                  <p className="text-sm text-muted-foreground mt-2">Total rooms</p>
+                </CardContent>
+              </Card>
             </div>
 
             <Card className="border-accent-peach/20">
@@ -97,6 +128,20 @@ export default async function AdminDashboard() {
                   >
                     <h3 className="font-semibold mb-1">Manage Keychains</h3>
                     <p className="text-sm text-muted-foreground">Edit keychain products and pricing</p>
+                  </a>
+                  <a
+                    href="/admin/orders"
+                    className="p-4 border rounded-lg hover:bg-accent-peach-light/20 transition-colors"
+                  >
+                    <h3 className="font-semibold mb-1">Manage Orders</h3>
+                    <p className="text-sm text-muted-foreground">View and update customer orders</p>
+                  </a>
+                  <a
+                    href="/admin/chat"
+                    className="p-4 border rounded-lg hover:bg-accent-peach-light/20 transition-colors"
+                  >
+                    <h3 className="font-semibold mb-1">Chat Management</h3>
+                    <p className="text-sm text-muted-foreground">Respond to customer inquiries</p>
                   </a>
                 </div>
               </CardContent>

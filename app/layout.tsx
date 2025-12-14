@@ -2,6 +2,9 @@ import type React from "react"
 import type { Metadata } from "next"
 import { Geist, Geist_Mono, Playfair_Display } from "next/font/google"
 import { Analytics } from "@vercel/analytics/next"
+import { Toaster } from "@/components/ui/sonner"
+import { CartProvider } from "@/contexts/cart-context"
+import ChatWidget from "@/components/chat/chat-widget"
 import "./globals.css"
 
 const _geist = Geist({ subsets: ["latin"] })
@@ -50,7 +53,11 @@ export default function RootLayout({
         <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.fullscreen/2.4.0/Control.FullScreen.min.js"></script>
       </head>
       <body className={`font-sans antialiased ${_playfair.variable}`}>
-        {children}
+        <CartProvider>
+          {children}
+          <ChatWidget />
+          <Toaster />
+        </CartProvider>
         <Analytics />
       </body>
     </html>

@@ -43,8 +43,17 @@ export default function Footer() {
             </a>
           </div>
 
-          <div className="text-center text-sm text-background/60 pt-4">
+          <div className="text-center text-sm text-background/60 pt-4 space-y-2">
             <p>© 2025 Leevienna FS. All rights reserved. | Handcrafted with ❤️ in Bulacan</p>
+            <div className="flex items-center justify-center gap-4">
+              <a href="/privacy-policy" className="hover:text-background transition underline">
+                Privacy Policy
+              </a>
+              <span>•</span>
+              <a href="/data-deletion" className="hover:text-background transition underline">
+                Data Deletion
+              </a>
+            </div>
           </div>
         </div>
       </div>

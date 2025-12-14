@@ -6,6 +6,8 @@ import { cn } from "@/lib/utils"
 
 const navItems = [
   { name: "Dashboard", href: "/admin/dashboard", icon: "📊" },
+  { name: "Orders", href: "/admin/orders", icon: "📦" },
+  { name: "Chat", href: "/admin/chat", icon: "💬" },
   { name: "Flower Products", href: "/admin/flowers", icon: "🌸" },
   { name: "Flower Customization", href: "/admin/flower-customization", icon: "🎨" },
   { name: "Keychain Products", href: "/admin/keychains", icon: "🔑" },

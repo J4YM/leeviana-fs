@@ -1,5 +1,6 @@
 import Image from "next/image"
 import { createClient } from "@/lib/supabase/server"
+import ProductActions from "@/components/products/product-actions"
 
 export default async function ProductsFlowers() {
   const supabase = await createClient()
@@ -69,6 +70,13 @@ export default async function ProductsFlowers() {
               {flower.price && (
                 <p className="text-base font-bold text-accent-peach-deep text-center mt-2">{flower.price}</p>
               )}
+              <ProductActions
+                productType="flower"
+                productId={flower.id}
+                productTitle={flower.title}
+                productImage={flower.image || "/placeholder.svg"}
+                price={flower.price || "0"}
+              />
             </div>
           ))}
         </div>
@@ -106,7 +114,14 @@ export default async function ProductsFlowers() {
                   <p className="text-xs sm:text-sm text-muted-foreground text-center mb-3 flex-grow leading-relaxed">
                     {option.description}
                   </p>
-                  <p className="text-base sm:text-lg font-bold text-accent-peach-deep text-center">{option.price}</p>
+                  <p className="text-base sm:text-lg font-bold text-accent-peach-deep text-center mb-2">{option.price}</p>
+                  <ProductActions
+                    productType="customization"
+                    productTitle={option.title}
+                    productImage={option.image || "/placeholder.svg"}
+                    price={option.price}
+                    description={option.description}
+                  />
                 </div>
               </div>
             ))}
